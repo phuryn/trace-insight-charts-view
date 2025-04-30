@@ -4,15 +4,84 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import RecordViewer from './RecordViewer';
 import { TraceRecord, EvalStatus } from '@/types/trace';
 import { fetchTraceRecords, fetchTraceRecordDetails, updateTraceStatus, updateTraceOutput } from '@/services/supabaseQueries';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Database } from '@/integrations/supabase/types';
+import { Filter } from 'lucide-react';
+import { Button } from './ui/button';
+import { Popover, PopoverTrigger, PopoverContent } from './ui/popover';
+
+// Define filter types based on Supabase enums
+type ToolType = Database['public']['Enums']['tool_type'] | 'All';
+type ScenarioType = Database['public']['Enums']['scenario_type'] | 'All';
+type StatusType = Database['public']['Enums']['eval_status_type'] | 'All';
+type DataSourceType = Database['public']['Enums']['data_source_type'] | 'All';
+
+// Filter interface
+interface RecordFilters {
+  tool: ToolType;
+  scenario: ScenarioType;
+  status: StatusType;
+  dataSource: DataSourceType;
+}
 
 const MainContent = () => {
   const [selectedRecordId, setSelectedRecordId] = useState<string | null>(null);
   const queryClient = useQueryClient();
+  
+  // Initialize filters with "All" as default values
+  const [filters, setFilters] = useState<RecordFilters>({
+    tool: 'All',
+    scenario: 'All',
+    status: 'All',
+    dataSource: 'All',
+  });
 
-  // Fetch all records (with minimal data)
+  // Tool options from Supabase enum
+  const toolOptions: ToolType[] = [
+    'All',
+    'Listing-Finder',
+    'Email-Draft',
+    'Market-Analysis',
+    'Offer-Generator',
+    'Valuation-Tool',
+    'Appointment-Scheduler'
+  ];
+
+  // Scenario options from Supabase enum
+  const scenarioOptions: ScenarioType[] = [
+    'All',
+    'Multiple-Listings',
+    'Offer-Submission',
+    'Property-Analysis',
+    'Client-Communication',
+    'Market-Research',
+    'Closing-Process'
+  ];
+
+  // Status options from Supabase enum
+  const statusOptions: StatusType[] = [
+    'All',
+    'Pending',
+    'Accepted',
+    'Rejected'
+  ];
+
+  // Data source options from Supabase enum
+  const dataSourceOptions: DataSourceType[] = [
+    'All',
+    'Human',
+    'Synthetic'
+  ];
+
+  // Fetch all records with filters applied
   const { data: records = [], isLoading: isLoadingRecords } = useQuery({
-    queryKey: ['traceRecords'],
-    queryFn: fetchTraceRecords
+    queryKey: ['traceRecords', filters],
+    queryFn: () => fetchTraceRecords(
+      filters.tool !== 'All' ? filters.tool : undefined,
+      filters.scenario !== 'All' ? filters.scenario : undefined,
+      filters.status !== 'All' ? filters.status : undefined,
+      filters.dataSource !== 'All' ? filters.dataSource : undefined
+    )
   });
 
   // Fetch details for selected record
@@ -69,6 +138,14 @@ const MainContent = () => {
     }
   };
 
+  // Handle filter changes
+  const handleFilterChange = (filterType: keyof RecordFilters, value: string) => {
+    setFilters(prev => ({
+      ...prev,
+      [filterType]: value
+    }));
+  };
+
   // Combine records with details for the selected record
   const recordsWithDetails = records.map(record => 
     record.id === selectedRecordId && selectedRecordDetails
@@ -78,7 +155,90 @@ const MainContent = () => {
 
   return (
     <div className="flex-1 p-6 bg-white">
-      <h2 className="text-xl font-semibold mb-4">Evaluation Records</h2>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-semibold">Evaluation Records</h2>
+        
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="ml-auto">
+              <Filter className="mr-2 h-4 w-4" />
+              Filters
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-80">
+            <div className="space-y-4 p-2">
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium">Tool</h3>
+                <Select 
+                  value={filters.tool} 
+                  onValueChange={(value) => handleFilterChange('tool', value as ToolType)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Tool" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {toolOptions.map(option => (
+                      <SelectItem key={option} value={option}>{option}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium">Scenario</h3>
+                <Select 
+                  value={filters.scenario} 
+                  onValueChange={(value) => handleFilterChange('scenario', value as ScenarioType)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Scenario" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {scenarioOptions.map(option => (
+                      <SelectItem key={option} value={option}>{option}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium">Status</h3>
+                <Select 
+                  value={filters.status} 
+                  onValueChange={(value) => handleFilterChange('status', value as StatusType)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {statusOptions.map(option => (
+                      <SelectItem key={option} value={option}>{option}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium">Data Source</h3>
+                <Select 
+                  value={filters.dataSource} 
+                  onValueChange={(value) => handleFilterChange('dataSource', value as DataSourceType)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Data Source" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {dataSourceOptions.map(option => (
+                      <SelectItem key={option} value={option}>{option}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
+      
       {isLoadingRecords ? (
         <div className="text-gray-500 text-center py-8">
           Loading records...
@@ -92,7 +252,7 @@ const MainContent = () => {
         />
       ) : (
         <div className="text-gray-500 text-center py-8">
-          No records found.
+          No records found. Try adjusting your filters.
         </div>
       )}
     </div>

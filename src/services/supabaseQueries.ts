@@ -3,12 +3,43 @@ import { supabase } from "@/integrations/supabase/client";
 import { TraceRecord, EvalStatus, DailyStats, FunctionCall } from "@/types/trace";
 import { Database } from "@/integrations/supabase/types";
 
-// Function to fetch trace records for listing
-export const fetchTraceRecords = async (): Promise<TraceRecord[]> => {
-  const { data, error } = await supabase
+type ToolType = Database['public']['Enums']['tool_type'] | undefined;
+type ScenarioType = Database['public']['Enums']['scenario_type'] | undefined;
+type StatusType = Database['public']['Enums']['eval_status_type'] | undefined;
+type DataSourceType = Database['public']['Enums']['data_source_type'] | undefined;
+
+// Function to fetch trace records for listing with optional filters
+export const fetchTraceRecords = async (
+  tool?: ToolType,
+  scenario?: ScenarioType,
+  status?: StatusType,
+  dataSource?: DataSourceType
+): Promise<TraceRecord[]> => {
+  // Start the query
+  let query = supabase
     .from('llm_traces')
     .select('id, user_message, status, llm_score, created_at, tool, scenario, data_source')
-    .order('created_at', { ascending: true }); // Changed to ascending order
+    .order('created_at', { ascending: true });
+  
+  // Apply filters if provided
+  if (tool) {
+    query = query.eq('tool', tool);
+  }
+  
+  if (scenario) {
+    query = query.eq('scenario', scenario);
+  }
+  
+  if (status) {
+    query = query.eq('status', status);
+  }
+  
+  if (dataSource) {
+    query = query.eq('data_source', dataSource);
+  }
+  
+  // Execute the query
+  const { data, error } = await query;
   
   if (error) {
     console.error('Error fetching trace records:', error);
@@ -27,6 +58,7 @@ export const fetchTraceRecords = async (): Promise<TraceRecord[]> => {
     metadata: {
       toolName: record.tool,
       scenario: record.scenario,
+      dataSource: record.data_source,
       timestamp: record.created_at
     }
   }));

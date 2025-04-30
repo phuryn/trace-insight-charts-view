@@ -23,6 +23,7 @@ export interface TraceRecord {
   metadata?: {
     toolName?: string;
     scenario?: string;
+    dataSource?: string;
     timestamp?: string;
     functionCalls?: FunctionCall[];
   };
