@@ -264,13 +264,28 @@ const RecordViewer = ({
             </Button>
           </div>
           <div className="flex gap-2">
-            <Button onClick={handleReset} variant="outline" size="sm" disabled={!hasFullDetails || isPending}>
+            <Button 
+              onClick={handleReset} 
+              variant="outline" 
+              size="sm" 
+              disabled={!hasFullDetails || isPending}
+            >
               <RotateCcw className="mr-1 h-4 w-4" /> Reset
             </Button>
-            <Button onClick={handleReject} variant="destructive" size="sm" disabled={!hasFullDetails || isAccepted || isRejected}>
+            <Button 
+              onClick={handleReject} 
+              variant="destructive" 
+              size="sm" 
+              disabled={!hasFullDetails || isAccepted || isRejected}
+            >
               <X className="mr-1 h-4 w-4" /> Reject
             </Button>
-            <Button onClick={handleAccept} variant="default" size="sm" disabled={!hasFullDetails || isAccepted || isRejected}>
+            <Button 
+              onClick={handleAccept} 
+              variant="default" 
+              size="sm" 
+              disabled={!hasFullDetails || isAccepted || isRejected}
+            >
               <Check className="mr-1 h-4 w-4" /> Accept
             </Button>
           </div>

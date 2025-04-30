@@ -8,7 +8,7 @@ export const fetchTraceRecords = async (): Promise<TraceRecord[]> => {
   const { data, error } = await supabase
     .from('llm_traces')
     .select('id, user_message, status, llm_score, created_at, tool, scenario, data_source')
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: true }); // Changed to ascending order
   
   if (error) {
     console.error('Error fetching trace records:', error);

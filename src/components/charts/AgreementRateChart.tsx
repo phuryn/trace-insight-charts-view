@@ -30,7 +30,7 @@ interface AgreementRateChartProps {
 }
 
 const AgreementRateChart = ({ data }: AgreementRateChartProps) => {
-  // Check if data is empty or all values are 0
+  // Check if data is empty or all agreement rate values are 0
   const hasData = data.length > 0 && data.some(item => item.agreementRate > 0);
 
   return (
