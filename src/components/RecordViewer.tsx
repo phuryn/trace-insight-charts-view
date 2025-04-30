@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { TraceRecord, EvalStatus } from '@/types/trace';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -140,7 +139,6 @@ const RecordViewer = ({
                     <ReactMarkdown 
                       remarkPlugins={[remarkGfm]}
                       components={{
-                        // Override default elements to preserve newlines and formatting
                         p: ({node, ...props}) => <p className="whitespace-pre-wrap" {...props} />
                       }}
                     >
