@@ -27,11 +27,13 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
       <Header />
-      <div className="max-w-[1200px] w-full mx-auto flex flex-col md:flex-row flex-1 overflow-hidden">
-        {(!isMobile || showSidebar) && (
-          <Sidebar stats={stats} onClose={isMobile ? toggleSidebar : undefined} />
-        )}
-        <MainContent />
+      <div className="bg-gray-100 w-full py-4">
+        <div className="max-w-[1200px] w-full mx-auto flex flex-col md:flex-row flex-1 overflow-hidden">
+          {(!isMobile || showSidebar) && (
+            <Sidebar stats={stats} onClose={isMobile ? toggleSidebar : undefined} />
+          )}
+          <MainContent />
+        </div>
       </div>
       
       {isMobile && !showSidebar && (

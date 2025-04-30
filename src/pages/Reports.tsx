@@ -10,6 +10,7 @@ import AcceptanceRateChart from '@/components/charts/AcceptanceRateChart';
 import TimeRangeFilter from '@/components/TimeRangeFilter';
 import RecordsFilters from '@/components/RecordsFilters';
 import { Database } from '@/integrations/supabase/types';
+import Header from '@/components/Header';
 
 // Define filter types based on Supabase enums
 type ToolType = Database['public']['Enums']['tool_type'] | 'All';
@@ -56,6 +57,7 @@ const Reports = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
+      <Header />
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-[1200px] w-full mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
@@ -76,34 +78,36 @@ const Reports = () => {
         </div>
       </div>
 
-      <div className="max-w-[1200px] w-full mx-auto px-6 py-6">
-        <div className="mb-6 bg-white p-4 rounded-lg shadow-sm">
-          <h2 className="text-lg font-medium mb-4">Filters</h2>
-          <RecordsFilters filters={filters} onFilterChange={handleFilterChange} />
-        </div>
+      <div className="bg-gray-100 py-4">
+        <div className="max-w-[1200px] w-full mx-auto px-6 py-2">
+          <div className="mb-6 bg-white p-4 rounded-lg shadow-sm">
+            <h2 className="text-lg font-medium mb-4">Filters</h2>
+            <RecordsFilters filters={filters} onFilterChange={handleFilterChange} />
+          </div>
 
-        {isLoading ? (
-          <div className="bg-white p-8 rounded-lg shadow-sm text-center">
-            <p>Loading statistics...</p>
-          </div>
-        ) : error ? (
-          <div className="bg-white p-8 rounded-lg shadow-sm text-center text-red-500">
-            <p>Error loading statistics. Please try again later.</p>
-          </div>
-        ) : stats.length === 0 ? (
-          <div className="bg-white p-8 rounded-lg shadow-sm text-center">
-            <p>No data available for the selected time range.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div className="bg-white p-4 rounded-lg shadow-sm">
-              <AgreementRateChart data={stats} height={240} />
+          {isLoading ? (
+            <div className="bg-white p-8 rounded-lg shadow-sm text-center">
+              <p>Loading statistics...</p>
             </div>
-            <div className="bg-white p-4 rounded-lg shadow-sm">
-              <AcceptanceRateChart data={stats} height={240} />
+          ) : error ? (
+            <div className="bg-white p-8 rounded-lg shadow-sm text-center text-red-500">
+              <p>Error loading statistics. Please try again later.</p>
             </div>
-          </div>
-        )}
+          ) : stats.length === 0 ? (
+            <div className="bg-white p-8 rounded-lg shadow-sm text-center">
+              <p>No data available for the selected time range.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              <div className="bg-white p-4 rounded-lg shadow-sm">
+                <AgreementRateChart data={stats} height={240} />
+              </div>
+              <div className="bg-white p-4 rounded-lg shadow-sm">
+                <AcceptanceRateChart data={stats} height={240} />
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
