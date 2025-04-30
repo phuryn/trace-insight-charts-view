@@ -57,7 +57,7 @@ const Reports = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
       <div className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-6 py-4">
+        <div className="max-w-[1200px] w-full mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link to="/">
@@ -76,7 +76,7 @@ const Reports = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-6 py-6">
+      <div className="max-w-[1200px] w-full mx-auto px-6 py-6">
         <div className="mb-6 bg-white p-4 rounded-lg shadow-sm">
           <h2 className="text-lg font-medium mb-4">Filters</h2>
           <RecordsFilters filters={filters} onFilterChange={handleFilterChange} />

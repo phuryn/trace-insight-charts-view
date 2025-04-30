@@ -27,7 +27,7 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
       <Header />
-      <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
+      <div className="max-w-[1200px] w-full mx-auto flex flex-col md:flex-row flex-1 overflow-hidden">
         {(!isMobile || showSidebar) && (
           <Sidebar stats={stats} onClose={isMobile ? toggleSidebar : undefined} />
         )}
@@ -35,7 +35,7 @@ const Index = () => {
       </div>
       
       {isMobile && !showSidebar && (
-        <div className="p-4 bg-white border-t">
+        <div className="p-4 bg-white border-t max-w-[1200px] w-full mx-auto">
           <Button 
             variant="outline" 
             className="w-full" 
