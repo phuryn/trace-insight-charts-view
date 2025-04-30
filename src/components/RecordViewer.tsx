@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { TraceRecord, EvalStatus } from '@/types/trace';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,6 +19,7 @@ import remarkGfm from 'remark-gfm';
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from '@/context/AuthContext';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface RecordViewerProps {
   records: TraceRecord[];
@@ -42,6 +42,7 @@ const RecordViewer = ({
   const [rejectReason, setRejectReason] = useState('');
   const { toast } = useToast();
   const { canUpdateRecords } = useAuth();
+  const isMobile = useIsMobile();
 
   const currentRecord = records[currentIndex] || null;
   
@@ -294,7 +295,7 @@ const RecordViewer = ({
           </div>
         </CardContent>
         
-        <CardFooter className="flex justify-between">
+        <CardFooter className={`${isMobile ? 'flex-col space-y-4' : 'flex justify-between'}`}>
           <div className="flex gap-2">
             <Button onClick={handlePrevious} disabled={currentIndex === 0} variant="outline" size="sm">
               <ChevronLeft className="mr-1 h-4 w-4" /> Previous
@@ -304,7 +305,7 @@ const RecordViewer = ({
             </Button>
           </div>
           {canUpdateRecords ? (
-            <div className="flex gap-2">
+            <div className={`${isMobile ? 'flex justify-end' : ''} gap-2`}>
               <Button 
                 onClick={handleReset} 
                 variant="outline" 
