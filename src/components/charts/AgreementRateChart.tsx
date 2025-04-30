@@ -35,10 +35,10 @@ const AgreementRateChart = ({ data }: AgreementRateChartProps) => {
       <CardHeader className="pb-0">
         <CardTitle className="text-sm text-gray-600 font-medium">LLM ↔ Human Agreement</CardTitle>
       </CardHeader>
-      <CardContent className="p-0 px-2">
+      <CardContent>
         <div className="h-[120px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
+            <LineChart data={data} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
               <XAxis 
                 dataKey="date" 
