@@ -1,11 +1,26 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React, { useEffect, useState } from 'react';
+import Header from '@/components/Header';
+import Sidebar from '@/components/Sidebar';
+import MainContent from '@/components/MainContent';
+import { DailyStats } from '@/types/trace';
+import { getDailyStats } from '@/services/mockData';
 
 const Index = () => {
+  const [stats, setStats] = useState<DailyStats[]>([]);
+
+  useEffect(() => {
+    // In a real application, this would be an API call
+    const fetchedStats = getDailyStats();
+    setStats(fetchedStats);
+  }, []);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <div className="min-h-screen flex flex-col bg-gray-100">
+      <Header />
+      <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
+        <Sidebar stats={stats} />
+        <MainContent />
       </div>
     </div>
   );
