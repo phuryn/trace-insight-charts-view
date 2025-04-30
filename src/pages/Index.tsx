@@ -1,19 +1,16 @@
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import MainContent from '@/components/MainContent';
-import { DailyStats } from '@/types/trace';
-import { getDailyStats } from '@/services/mockData';
+import { fetchDailyStats } from '@/services/supabaseQueries';
 
 const Index = () => {
-  const [stats, setStats] = useState<DailyStats[]>([]);
-
-  useEffect(() => {
-    // In a real application, this would be an API call
-    const fetchedStats = getDailyStats();
-    setStats(fetchedStats);
-  }, []);
+  const { data: stats = [] } = useQuery({
+    queryKey: ['dailyStats'],
+    queryFn: () => fetchDailyStats(30), // Fetch up to 30 days of stats
+  });
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">

@@ -9,16 +9,115 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      llm_function_calls: {
+        Row: {
+          created_at: string
+          function_arguments: Json
+          function_name: string
+          function_response: Json | null
+          id: string
+          trace_id: string
+        }
+        Insert: {
+          created_at?: string
+          function_arguments: Json
+          function_name: string
+          function_response?: Json | null
+          id?: string
+          trace_id: string
+        }
+        Update: {
+          created_at?: string
+          function_arguments?: Json
+          function_name?: string
+          function_response?: Json | null
+          id?: string
+          trace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "llm_function_calls_trace_id_fkey"
+            columns: ["trace_id"]
+            isOneToOne: false
+            referencedRelation: "llm_traces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      llm_traces: {
+        Row: {
+          assistant_response: string
+          created_at: string
+          data_source: Database["public"]["Enums"]["data_source_type"]
+          editable_output: string
+          id: string
+          llm_score: Database["public"]["Enums"]["llm_score_type"]
+          reject_reason: string | null
+          scenario: Database["public"]["Enums"]["scenario_type"]
+          status: Database["public"]["Enums"]["eval_status_type"]
+          tool: Database["public"]["Enums"]["tool_type"]
+          user_message: string
+        }
+        Insert: {
+          assistant_response: string
+          created_at?: string
+          data_source: Database["public"]["Enums"]["data_source_type"]
+          editable_output: string
+          id?: string
+          llm_score: Database["public"]["Enums"]["llm_score_type"]
+          reject_reason?: string | null
+          scenario: Database["public"]["Enums"]["scenario_type"]
+          status?: Database["public"]["Enums"]["eval_status_type"]
+          tool: Database["public"]["Enums"]["tool_type"]
+          user_message: string
+        }
+        Update: {
+          assistant_response?: string
+          created_at?: string
+          data_source?: Database["public"]["Enums"]["data_source_type"]
+          editable_output?: string
+          id?: string
+          llm_score?: Database["public"]["Enums"]["llm_score_type"]
+          reject_reason?: string | null
+          scenario?: Database["public"]["Enums"]["scenario_type"]
+          status?: Database["public"]["Enums"]["eval_status_type"]
+          tool?: Database["public"]["Enums"]["tool_type"]
+          user_message?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_daily_stats: {
+        Args: { days_limit?: number }
+        Returns: {
+          date: string
+          agreement_rate: number
+          acceptance_rate: number
+        }[]
+      }
     }
     Enums: {
-      [_ in never]: never
+      data_source_type: "Human" | "Synthetic" | "All"
+      eval_status_type: "Pending" | "Accepted" | "Rejected"
+      llm_score_type: "Pass" | "Fail"
+      scenario_type:
+        | "Multiple-Listings"
+        | "Offer-Submission"
+        | "Property-Analysis"
+        | "Client-Communication"
+        | "Market-Research"
+        | "Closing-Process"
+      tool_type:
+        | "Listing-Finder"
+        | "Email-Draft"
+        | "Market-Analysis"
+        | "Offer-Generator"
+        | "Valuation-Tool"
+        | "Appointment-Scheduler"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -133,6 +232,26 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      data_source_type: ["Human", "Synthetic", "All"],
+      eval_status_type: ["Pending", "Accepted", "Rejected"],
+      llm_score_type: ["Pass", "Fail"],
+      scenario_type: [
+        "Multiple-Listings",
+        "Offer-Submission",
+        "Property-Analysis",
+        "Client-Communication",
+        "Market-Research",
+        "Closing-Process",
+      ],
+      tool_type: [
+        "Listing-Finder",
+        "Email-Draft",
+        "Market-Analysis",
+        "Offer-Generator",
+        "Valuation-Tool",
+        "Appointment-Scheduler",
+      ],
+    },
   },
 } as const
