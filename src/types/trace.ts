@@ -10,6 +10,12 @@ export interface TraceRecord {
   assistantResponse: string;
   editableOutput: string;
   date: string; // ISO date string
+  rejectReason?: string;
+  metadata?: {
+    toolName?: string;
+    scenario?: string;
+    timestamp?: string;
+  };
 }
 
 export interface DailyStats {
