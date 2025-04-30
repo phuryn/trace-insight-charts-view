@@ -160,6 +160,8 @@ export const updateTraceOutput = async (
 // Function to fetch daily statistics
 export const fetchDailyStats = async (days: number = 7): Promise<DailyStats[]> => {
   try {
+    console.log(`Fetching daily stats for the last ${days} days`);
+    
     const { data, error } = await supabase
       .rpc('get_daily_stats', { days_limit: days });
     
@@ -167,6 +169,8 @@ export const fetchDailyStats = async (days: number = 7): Promise<DailyStats[]> =
       console.error('Error fetching daily stats:', error);
       throw error;
     }
+
+    console.log('Daily stats fetched successfully:', data);
 
     // Transform the data to match our DailyStats interface
     return (data || []).map(item => ({

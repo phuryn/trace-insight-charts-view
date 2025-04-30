@@ -38,10 +38,13 @@ const Reports = () => {
   });
 
   // Fetch stats data with the selected time range
-  const { data: stats = [], isLoading } = useQuery({
+  const { data: stats = [], isLoading, error } = useQuery({
     queryKey: ['dailyStats', timeRange],
     queryFn: () => fetchDailyStats(timeRange),
   });
+
+  // Add console log to debug data issues
+  console.log('Reports data:', { stats, isLoading, error, timeRange });
 
   // Handle filter changes
   const handleFilterChange = (filterType: keyof RecordFilters, value: string) => {
@@ -79,14 +82,28 @@ const Reports = () => {
           <RecordsFilters filters={filters} onFilterChange={handleFilterChange} />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div className="bg-white p-4 rounded-lg shadow-sm">
-            <AgreementRateChart data={stats} height={240} />
+        {isLoading ? (
+          <div className="bg-white p-8 rounded-lg shadow-sm text-center">
+            <p>Loading statistics...</p>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow-sm">
-            <AcceptanceRateChart data={stats} height={240} />
+        ) : error ? (
+          <div className="bg-white p-8 rounded-lg shadow-sm text-center text-red-500">
+            <p>Error loading statistics. Please try again later.</p>
           </div>
-        </div>
+        ) : stats.length === 0 ? (
+          <div className="bg-white p-8 rounded-lg shadow-sm text-center">
+            <p>No data available for the selected time range.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div className="bg-white p-4 rounded-lg shadow-sm">
+              <AgreementRateChart data={stats} height={240} />
+            </div>
+            <div className="bg-white p-4 rounded-lg shadow-sm">
+              <AcceptanceRateChart data={stats} height={240} />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

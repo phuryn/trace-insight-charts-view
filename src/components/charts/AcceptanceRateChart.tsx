@@ -43,7 +43,7 @@ const AcceptanceRateChart = ({ data, height = 120 }: AcceptanceRateChartProps) =
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className={`h-[${height}px] w-full`}>
+        <div style={{ height: `${height}px` }} className="w-full">
           {hasData ? (
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data} margin={{ top: 5, right: 20, left: -5, bottom: 5 }}>

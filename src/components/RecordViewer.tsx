@@ -305,7 +305,7 @@ const RecordViewer = ({
             </Button>
           </div>
           {canUpdateRecords ? (
-            <div className={`${isMobile ? 'flex justify-end' : ''} gap-2`}>
+            <div className={`${isMobile ? 'flex justify-end' : 'flex'} gap-3`}>
               <Button 
                 onClick={handleReset} 
                 variant="outline" 
