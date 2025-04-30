@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface RecordViewerProps {
   records: TraceRecord[];
@@ -134,8 +135,14 @@ const RecordViewer = ({
               {hasFullDetails ? (
                 <div className="bg-blue-50 rounded-lg p-4">
                   <div className="font-semibold mb-2">Assistant</div>
-                  <div className="whitespace-pre-wrap">
-                    <ReactMarkdown>
+                  <div className="prose prose-sm max-w-none">
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        // Override to ensure paragraphs preserve newlines
+                        p: ({node, ...props}) => <p className="whitespace-pre-wrap mb-4" {...props} />
+                      }}
+                    >
                       {currentRecord.assistantResponse || ""}
                     </ReactMarkdown>
                   </div>
