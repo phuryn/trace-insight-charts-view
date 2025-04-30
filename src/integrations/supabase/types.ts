@@ -86,6 +86,30 @@ export type Database = {
         }
         Relationships: []
       }
+      users: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -98,6 +122,10 @@ export type Database = {
           agreement_rate: number
           acceptance_rate: number
         }[]
+      }
+      get_user_role: {
+        Args: { user_id: string }
+        Returns: Database["public"]["Enums"]["user_role"]
       }
     }
     Enums: {
@@ -118,6 +146,7 @@ export type Database = {
         | "Offer-Generator"
         | "Valuation-Tool"
         | "Appointment-Scheduler"
+      user_role: "Inspector" | "Reviewer" | "Admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -252,6 +281,7 @@ export const Constants = {
         "Valuation-Tool",
         "Appointment-Scheduler",
       ],
+      user_role: ["Inspector", "Reviewer", "Admin"],
     },
   },
 } as const

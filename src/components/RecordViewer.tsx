@@ -5,7 +5,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Check, X, RotateCcw } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Check, X, RotateCcw, ShieldAlert } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -18,6 +18,8 @@ import { useToast } from "@/hooks/use-toast";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAuth } from '@/context/AuthContext';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface RecordViewerProps {
   records: TraceRecord[];
@@ -39,6 +41,7 @@ const RecordViewer = ({
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const { toast } = useToast();
+  const { canUpdateRecords } = useAuth();
 
   const currentRecord = records[currentIndex] || null;
   
@@ -53,7 +56,9 @@ const RecordViewer = ({
   };
 
   const handleOutputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    onUpdateOutput(currentRecord.id, e.target.value);
+    if (canUpdateRecords) {
+      onUpdateOutput(currentRecord.id, e.target.value);
+    }
   };
 
   const handleAccept = () => {
@@ -266,11 +271,20 @@ const RecordViewer = ({
             <label className="block text-sm font-medium mb-2">
               Editable Output
             </label>
+            {!canUpdateRecords && (
+              <Alert variant="warning" className="mb-2">
+                <ShieldAlert className="h-4 w-4" />
+                <AlertDescription>
+                  You don't have permission to edit records. Contact an administrator for access.
+                </AlertDescription>
+              </Alert>
+            )}
             {hasFullDetails ? (
               <Textarea 
                 value={currentRecord.editableOutput || ''} 
                 onChange={handleOutputChange}
                 className="min-h-[150px]"
+                readOnly={!canUpdateRecords}
               />
             ) : (
               <div className="min-h-[150px] border rounded-md flex items-center justify-center">
@@ -289,32 +303,38 @@ const RecordViewer = ({
               Next <ChevronRight className="ml-1 h-4 w-4" />
             </Button>
           </div>
-          <div className="flex gap-2">
-            <Button 
-              onClick={handleReset} 
-              variant="outline" 
-              size="sm" 
-              disabled={!hasFullDetails || isPending}
-            >
-              <RotateCcw className="mr-1 h-4 w-4" /> Reset
-            </Button>
-            <Button 
-              onClick={handleReject} 
-              variant="destructive" 
-              size="sm" 
-              disabled={!hasFullDetails || isAccepted || isRejected}
-            >
-              <X className="mr-1 h-4 w-4" /> Reject
-            </Button>
-            <Button 
-              onClick={handleAccept} 
-              variant="default" 
-              size="sm" 
-              disabled={!hasFullDetails || isAccepted || isRejected}
-            >
-              <Check className="mr-1 h-4 w-4" /> Accept
-            </Button>
-          </div>
+          {canUpdateRecords ? (
+            <div className="flex gap-2">
+              <Button 
+                onClick={handleReset} 
+                variant="outline" 
+                size="sm" 
+                disabled={!hasFullDetails || isPending}
+              >
+                <RotateCcw className="mr-1 h-4 w-4" /> Reset
+              </Button>
+              <Button 
+                onClick={handleReject} 
+                variant="destructive" 
+                size="sm" 
+                disabled={!hasFullDetails || isAccepted || isRejected}
+              >
+                <X className="mr-1 h-4 w-4" /> Reject
+              </Button>
+              <Button 
+                onClick={handleAccept} 
+                variant="default" 
+                size="sm" 
+                disabled={!hasFullDetails || isAccepted || isRejected}
+              >
+                <Check className="mr-1 h-4 w-4" /> Accept
+              </Button>
+            </div>
+          ) : (
+            <div className="text-sm text-muted-foreground italic">
+              View-only access
+            </div>
+          )}
         </CardFooter>
       </Card>
 
