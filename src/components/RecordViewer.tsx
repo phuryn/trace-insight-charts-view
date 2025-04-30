@@ -136,15 +136,25 @@ const RecordViewer = ({
                 <div className="bg-blue-50 rounded-lg p-4">
                   <div className="font-semibold mb-2">Assistant</div>
                   <div className="prose prose-sm max-w-none">
-                    <ReactMarkdown
-                      remarkPlugins={[remarkGfm]}
-                      components={{
-                        // Override to ensure paragraphs preserve newlines
-                        p: ({node, ...props}) => <p className="whitespace-pre-wrap mb-4" {...props} />
-                      }}
-                    >
-                      {currentRecord.assistantResponse || ""}
-                    </ReactMarkdown>
+                    {/* Render the assistant response with enhanced markdown support */}
+                    {currentRecord.assistantResponse ? (
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          // Override to ensure paragraphs preserve newlines
+                          p: ({node, ...props}) => <p className="whitespace-pre-wrap mb-4" {...props} />,
+                          // Ensure lists render properly with proper spacing
+                          li: ({node, ...props}) => <li className="my-1" {...props} />,
+                          // Make sure preformatted text maintains its formatting
+                          pre: ({node, ...props}) => <pre className="whitespace-pre-wrap bg-gray-100 p-2 rounded" {...props} />
+                        }}
+                      >
+                        {/* Replace literal \n sequences with actual newlines */}
+                        {currentRecord.assistantResponse.replace(/\\n/g, '\n')}
+                      </ReactMarkdown>
+                    ) : (
+                      "No response available"
+                    )}
                   </div>
                 </div>
               ) : (
