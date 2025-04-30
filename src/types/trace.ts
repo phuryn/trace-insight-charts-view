@@ -6,8 +6,8 @@ export interface FunctionCall {
   id: string;
   trace_id: string;
   function_name: string;
-  function_arguments: Record<string, any>;
-  function_response: Record<string, any> | null;
+  function_arguments: any; // Changed from Record<string, any> to any to be compatible with Json
+  function_response: any | null; // Changed from Record<string, any> to any
   created_at: string;
 }
 

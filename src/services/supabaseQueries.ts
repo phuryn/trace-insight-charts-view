@@ -1,6 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { TraceRecord, EvalStatus, DailyStats } from "@/types/trace";
+import { TraceRecord, EvalStatus, DailyStats, FunctionCall } from "@/types/trace";
 import { Database } from "@/integrations/supabase/types";
 
 // Function to fetch trace records for listing
@@ -55,6 +55,16 @@ export const fetchTraceRecordDetails = async (id: string): Promise<TraceRecord> 
     console.error('Error fetching function calls:', functionError);
   }
 
+  // Transform function calls to match our FunctionCall interface
+  const transformedFunctionCalls: FunctionCall[] = functionCalls ? functionCalls.map(call => ({
+    id: call.id,
+    trace_id: call.trace_id,
+    function_name: call.function_name,
+    function_arguments: call.function_arguments, // Now compatible with 'any' type
+    function_response: call.function_response, // Now compatible with 'any' type
+    created_at: call.created_at
+  })) : [];
+
   return {
     id: data.id,
     status: data.status,
@@ -68,7 +78,7 @@ export const fetchTraceRecordDetails = async (id: string): Promise<TraceRecord> 
       toolName: data.tool,
       scenario: data.scenario,
       timestamp: data.created_at,
-      functionCalls: functionCalls || []
+      functionCalls: transformedFunctionCalls
     }
   };
 };
