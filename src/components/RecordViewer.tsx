@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { TraceRecord, EvalStatus } from '@/types/trace';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,6 +14,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import ReactMarkdown from 'react-markdown';
 
 interface RecordViewerProps {
   records: TraceRecord[];
@@ -134,7 +134,11 @@ const RecordViewer = ({
               {hasFullDetails ? (
                 <div className="bg-blue-50 rounded-lg p-4">
                   <div className="font-semibold mb-2">Assistant</div>
-                  <div className="whitespace-pre-wrap">{currentRecord.assistantResponse}</div>
+                  <div className="whitespace-pre-wrap">
+                    <ReactMarkdown>
+                      {currentRecord.assistantResponse || ""}
+                    </ReactMarkdown>
+                  </div>
                 </div>
               ) : (
                 <div className="bg-blue-50 rounded-lg p-4 flex items-center justify-center min-h-[100px]">
