@@ -90,14 +90,30 @@ const RecordViewer = ({
   
   // Check if we have full details for the current record
   const hasFullDetails = !!currentRecord.assistantResponse;
+  
+  // Determine which buttons should be disabled based on status
+  const isPending = currentRecord.status === 'Pending';
+  const isAccepted = currentRecord.status === 'Accepted';
+  const isRejected = currentRecord.status === 'Rejected';
 
   return (
     <div className="space-y-4">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Record Reviewer</CardTitle>
-          <div className="text-sm text-muted-foreground">
-            Record {currentIndex + 1} of {records.length}
+          <div className="flex items-center gap-3">
+            <div 
+              className={`px-2 py-1 text-xs font-medium rounded-full ${
+                isPending ? 'bg-yellow-100 text-yellow-800' : 
+                isAccepted ? 'bg-green-100 text-green-800' : 
+                'bg-red-100 text-red-800'
+              }`}
+            >
+              {currentRecord.status}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              Record {currentIndex + 1} of {records.length}
+            </div>
           </div>
         </CardHeader>
         
@@ -248,13 +264,13 @@ const RecordViewer = ({
             </Button>
           </div>
           <div className="flex gap-2">
-            <Button onClick={handleReset} variant="outline" size="sm" disabled={!hasFullDetails}>
+            <Button onClick={handleReset} variant="outline" size="sm" disabled={!hasFullDetails || isPending}>
               <RotateCcw className="mr-1 h-4 w-4" /> Reset
             </Button>
-            <Button onClick={handleReject} variant="destructive" size="sm" disabled={!hasFullDetails}>
+            <Button onClick={handleReject} variant="destructive" size="sm" disabled={!hasFullDetails || isAccepted || isRejected}>
               <X className="mr-1 h-4 w-4" /> Reject
             </Button>
-            <Button onClick={handleAccept} variant="default" size="sm" disabled={!hasFullDetails}>
+            <Button onClick={handleAccept} variant="default" size="sm" disabled={!hasFullDetails || isAccepted || isRejected}>
               <Check className="mr-1 h-4 w-4" /> Accept
             </Button>
           </div>

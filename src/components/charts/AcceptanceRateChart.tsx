@@ -31,6 +31,9 @@ interface AcceptanceRateChartProps {
 }
 
 const AcceptanceRateChart = ({ data }: AcceptanceRateChartProps) => {
+  // Check if data is empty or all values are 0
+  const hasData = data.length > 0 && data.some(item => item.acceptanceRate > 0);
+
   return (
     <Card className="w-full">
       <CardHeader className="pb-0">
@@ -40,35 +43,41 @@ const AcceptanceRateChart = ({ data }: AcceptanceRateChartProps) => {
       </CardHeader>
       <CardContent>
         <div className="h-[120px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-              <XAxis 
-                dataKey="date"
-                tickFormatter={formatDate}
-                tick={{ fontSize: 10 }}
-                axisLine={{ stroke: '#e0e0e0' }}
-                tickLine={{ stroke: '#e0e0e0' }}
-              />
-              <YAxis 
-                domain={[0, 100]} 
-                tickCount={3}
-                tick={{ fontSize: 10 }}
-                axisLine={{ stroke: '#e0e0e0' }}
-                tickLine={{ stroke: '#e0e0e0' }}
-                tickFormatter={(value) => `${value}%`}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Line
-                type="monotone"
-                dataKey="acceptanceRate"
-                stroke="#22c55e"
-                strokeWidth={2}
-                dot={{ r: 4, fill: '#22c55e', stroke: '#ffffff', strokeWidth: 2 }}
-                activeDot={{ r: 6, fill: '#22c55e', stroke: '#ffffff', strokeWidth: 2 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+          {hasData ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={data} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+                <XAxis 
+                  dataKey="date"
+                  tickFormatter={formatDate}
+                  tick={{ fontSize: 10 }}
+                  axisLine={{ stroke: '#e0e0e0' }}
+                  tickLine={{ stroke: '#e0e0e0' }}
+                />
+                <YAxis 
+                  domain={[0, 100]} 
+                  tickCount={3}
+                  tick={{ fontSize: 10 }}
+                  axisLine={{ stroke: '#e0e0e0' }}
+                  tickLine={{ stroke: '#e0e0e0' }}
+                  tickFormatter={(value) => `${value}%`}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Line
+                  type="monotone"
+                  dataKey="acceptanceRate"
+                  stroke="#22c55e"
+                  strokeWidth={2}
+                  dot={{ r: 4, fill: '#22c55e', stroke: '#ffffff', strokeWidth: 2 }}
+                  activeDot={{ r: 6, fill: '#22c55e', stroke: '#ffffff', strokeWidth: 2 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="h-full w-full flex items-center justify-center">
+              <p className="text-sm text-muted-foreground">No acceptance data available</p>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
