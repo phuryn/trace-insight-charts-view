@@ -42,7 +42,7 @@ const AgreementRateChart = ({ data }: AgreementRateChartProps) => {
         <div className="h-[120px] w-full">
           {hasData ? (
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={data} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+              <LineChart data={data} margin={{ top: 5, right: 20, left: -5, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
                 <XAxis 
                   dataKey="date" 
@@ -58,7 +58,7 @@ const AgreementRateChart = ({ data }: AgreementRateChartProps) => {
                   axisLine={{ stroke: '#e0e0e0' }} 
                   tickLine={{ stroke: '#e0e0e0' }}
                   tickFormatter={value => `${value}%`}
-                  width={35}
+                  width={40}
                   dx={-2}
                 />
                 <Tooltip content={<CustomTooltip />} />
