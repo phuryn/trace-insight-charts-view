@@ -15,14 +15,12 @@ import Header from '@/components/Header';
 // Define filter types based on Supabase enums
 type ToolType = Database['public']['Enums']['tool_type'] | 'All';
 type ScenarioType = Database['public']['Enums']['scenario_type'] | 'All';
-type StatusType = Database['public']['Enums']['eval_status_type'] | 'All';
 type DataSourceType = Database['public']['Enums']['data_source_type'] | 'All';
 
-// Filter interface
+// Filter interface - removed Status
 interface RecordFilters {
   tool: ToolType;
   scenario: ScenarioType;
-  status: StatusType;
   dataSource: DataSourceType;
 }
 
@@ -30,22 +28,21 @@ const Reports = () => {
   // State for time range filter (7, 30, or 90 days)
   const [timeRange, setTimeRange] = useState<7 | 30 | 90>(30);
   
-  // Initialize filters with "All" as default values
+  // Initialize filters with "All" as default values (removed status)
   const [filters, setFilters] = useState<RecordFilters>({
     tool: 'All',
     scenario: 'All',
-    status: 'All',
     dataSource: 'All',
   });
 
-  // Fetch stats data with the selected time range and filters
+  // Fetch stats data with the selected time range and filters (no status filter)
   const { data: stats = [], isLoading, error } = useQuery({
     queryKey: ['dailyStats', timeRange, filters],
     queryFn: () => fetchDailyStats(
       timeRange,
       filters.tool !== 'All' ? filters.tool : undefined,
       filters.scenario !== 'All' ? filters.scenario : undefined,
-      filters.status !== 'All' ? filters.status : undefined,
+      undefined, // No status filter
       filters.dataSource !== 'All' ? filters.dataSource : undefined
     ),
   });
@@ -88,7 +85,11 @@ const Reports = () => {
         <div className="max-w-[1200px] w-full mx-auto px-6 py-2">
           <div className="mb-6 bg-white p-4 rounded-lg shadow-sm">
             <h2 className="text-lg font-medium mb-4">Filters</h2>
-            <RecordsFilters filters={filters} onFilterChange={handleFilterChange} />
+            <RecordsFilters 
+              filters={filters} 
+              onFilterChange={handleFilterChange} 
+              excludeStatus={true} 
+            />
           </div>
 
           {isLoading ? (

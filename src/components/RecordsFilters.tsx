@@ -13,16 +13,17 @@ type DataSourceType = Database['public']['Enums']['data_source_type'] | 'All';
 interface RecordFilters {
   tool: ToolType;
   scenario: ScenarioType;
-  status: StatusType;
+  status?: StatusType; // Make status optional
   dataSource: DataSourceType;
 }
 
 interface RecordsFiltersProps {
   filters: RecordFilters;
   onFilterChange: (filterType: keyof RecordFilters, value: string) => void;
+  excludeStatus?: boolean; // New prop to exclude status filter
 }
 
-const RecordsFilters = ({ filters, onFilterChange }: RecordsFiltersProps) => {
+const RecordsFilters = ({ filters, onFilterChange, excludeStatus = false }: RecordsFiltersProps) => {
   // Tool options from Supabase enum
   const toolOptions: ToolType[] = [
     'All',
@@ -96,22 +97,25 @@ const RecordsFilters = ({ filters, onFilterChange }: RecordsFiltersProps) => {
         </Select>
       </div>
 
-      <div className="space-y-2">
-        <h3 className="text-sm font-medium">Status</h3>
-        <Select 
-          value={filters.status} 
-          onValueChange={(value) => onFilterChange('status', value as StatusType)}
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select Status" />
-          </SelectTrigger>
-          <SelectContent>
-            {statusOptions.map(option => (
-              <SelectItem key={option} value={option}>{option}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      {/* Only show status filter if not excluded */}
+      {!excludeStatus && (
+        <div className="space-y-2">
+          <h3 className="text-sm font-medium">Status</h3>
+          <Select 
+            value={filters.status} 
+            onValueChange={(value) => onFilterChange('status', value as StatusType)}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select Status" />
+            </SelectTrigger>
+            <SelectContent>
+              {statusOptions.map(option => (
+                <SelectItem key={option} value={option}>{option}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
 
       <div className="space-y-2">
         <h3 className="text-sm font-medium">Data Source</h3>
