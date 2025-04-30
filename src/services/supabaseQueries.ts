@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { TraceRecord, EvalStatus, DailyStats, FunctionCall } from "@/types/trace";
 import { Database } from "@/integrations/supabase/types";
@@ -186,7 +187,7 @@ export const fetchDailyStats = async (
     console.log('Daily stats fetched successfully:', data);
 
     // Transform the data to match our DailyStats interface
-    return (data || []).map(item => ({
+    return (data || []).map((item: any) => ({
       date: item.date,
       agreementRate: Number(item.agreement_rate),
       acceptanceRate: Number(item.acceptance_rate)

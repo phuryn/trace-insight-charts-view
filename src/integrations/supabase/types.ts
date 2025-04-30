@@ -123,6 +123,20 @@ export type Database = {
           acceptance_rate: number
         }[]
       }
+      get_daily_stats_filtered: {
+        Args: {
+          days_limit?: number
+          filter_tool?: string
+          filter_scenario?: string
+          filter_status?: string
+          filter_data_source?: string
+        }
+        Returns: {
+          date: string
+          agreement_rate: number
+          acceptance_rate: number
+        }[]
+      }
       get_user_role: {
         Args: { user_id: string }
         Returns: Database["public"]["Enums"]["user_role"]
