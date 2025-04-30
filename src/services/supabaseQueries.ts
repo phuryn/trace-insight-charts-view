@@ -129,17 +129,23 @@ export const updateTraceOutput = async (
 
 // Function to fetch daily statistics
 export const fetchDailyStats = async (days: number = 7): Promise<DailyStats[]> => {
-  const { data, error } = await supabase
-    .rpc('get_daily_stats', { days_limit: days });
-  
-  if (error) {
-    console.error('Error fetching daily stats:', error);
-    throw error;
-  }
+  try {
+    const { data, error } = await supabase
+      .rpc('get_daily_stats', { days_limit: days });
+    
+    if (error) {
+      console.error('Error fetching daily stats:', error);
+      throw error;
+    }
 
-  return (data || []).map(item => ({
-    date: item.date,
-    agreementRate: Number(item.agreement_rate),
-    acceptanceRate: Number(item.acceptance_rate)
-  }));
+    // Transform the data to match our DailyStats interface
+    return (data || []).map(item => ({
+      date: item.date,
+      agreementRate: Number(item.agreement_rate),
+      acceptanceRate: Number(item.acceptance_rate)
+    }));
+  } catch (error) {
+    console.error('Error fetching daily stats:', error);
+    return []; // Return empty array on error to prevent UI crashes
+  }
 };

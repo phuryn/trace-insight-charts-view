@@ -9,7 +9,7 @@ import { fetchDailyStats } from '@/services/supabaseQueries';
 const Index = () => {
   const { data: stats = [] } = useQuery({
     queryKey: ['dailyStats'],
-    queryFn: () => fetchDailyStats(30), // Fetch up to 30 days of stats
+    queryFn: () => fetchDailyStats(30), // Fetch up to 30 days of stats for better visualization
   });
 
   return (
