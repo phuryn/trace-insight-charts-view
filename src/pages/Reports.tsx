@@ -81,10 +81,10 @@ const Reports = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div className="bg-white p-4 rounded-lg shadow-sm">
-            <AgreementRateChart data={stats} />
+            <AgreementRateChart data={stats} height={240} />
           </div>
           <div className="bg-white p-4 rounded-lg shadow-sm">
-            <AcceptanceRateChart data={stats} />
+            <AcceptanceRateChart data={stats} height={240} />
           </div>
         </div>
       </div>

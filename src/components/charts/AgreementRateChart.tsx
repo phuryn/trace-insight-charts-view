@@ -27,9 +27,10 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
 
 interface AgreementRateChartProps {
   data: DailyStats[];
+  height?: number;
 }
 
-const AgreementRateChart = ({ data }: AgreementRateChartProps) => {
+const AgreementRateChart = ({ data, height = 120 }: AgreementRateChartProps) => {
   // Check if data is empty or all agreement rate values are 0
   const hasData = data.length > 0 && data.some(item => item.agreementRate > 0);
 
@@ -39,7 +40,7 @@ const AgreementRateChart = ({ data }: AgreementRateChartProps) => {
         <CardTitle className="text-sm text-gray-600 font-medium">LLM ↔ Human Agreement</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[120px] w-full">
+        <div className={`h-[${height}px] w-full`}>
           {hasData ? (
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data} margin={{ top: 5, right: 20, left: -5, bottom: 5 }}>

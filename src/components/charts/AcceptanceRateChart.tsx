@@ -28,9 +28,10 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
 
 interface AcceptanceRateChartProps {
   data: DailyStats[];
+  height?: number;
 }
 
-const AcceptanceRateChart = ({ data }: AcceptanceRateChartProps) => {
+const AcceptanceRateChart = ({ data, height = 120 }: AcceptanceRateChartProps) => {
   // Check if data is empty or all values are 0
   const hasData = data.length > 0 && data.some(item => item.acceptanceRate > 0);
 
@@ -42,7 +43,7 @@ const AcceptanceRateChart = ({ data }: AcceptanceRateChartProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[120px] w-full">
+        <div className={`h-[${height}px] w-full`}>
           {hasData ? (
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data} margin={{ top: 5, right: 20, left: -5, bottom: 5 }}>

@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -45,7 +44,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, currentSession) => {
         setSession(currentSession);
-        setUser(currentSession?.user ?? null);
+        // Type-safe assignment for UserWithRole
+        if (currentSession?.user) {
+          setUser(currentSession.user as UserWithRole);
+        } else {
+          setUser(null);
+        }
         
         // Fetch user role if we have a session
         if (currentSession?.user) {
@@ -62,7 +66,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
       setSession(currentSession);
-      setUser(currentSession?.user ?? null);
+      // Type-safe assignment for UserWithRole
+      if (currentSession?.user) {
+        setUser(currentSession.user as UserWithRole);
+      } else {
+        setUser(null);
+      }
       
       if (currentSession?.user) {
         fetchUserRole(currentSession.user.id);
