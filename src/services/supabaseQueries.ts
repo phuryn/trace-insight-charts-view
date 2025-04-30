@@ -157,13 +157,26 @@ export const updateTraceOutput = async (
   }
 };
 
-// Function to fetch daily statistics
-export const fetchDailyStats = async (days: number = 7): Promise<DailyStats[]> => {
+// Function to fetch daily statistics with optional filters
+export const fetchDailyStats = async (
+  days: number = 7,
+  tool?: ToolType,
+  scenario?: ScenarioType,
+  status?: StatusType,
+  dataSource?: DataSourceType
+): Promise<DailyStats[]> => {
   try {
-    console.log(`Fetching daily stats for the last ${days} days`);
+    console.log(`Fetching daily stats for the last ${days} days with filters:`, { tool, scenario, status, dataSource });
     
+    // Call the RPC function with filters
     const { data, error } = await supabase
-      .rpc('get_daily_stats', { days_limit: days });
+      .rpc('get_daily_stats_filtered', { 
+        days_limit: days,
+        filter_tool: tool || null,
+        filter_scenario: scenario || null, 
+        filter_status: status || null,
+        filter_data_source: dataSource || null
+      });
     
     if (error) {
       console.error('Error fetching daily stats:', error);

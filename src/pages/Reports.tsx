@@ -38,14 +38,20 @@ const Reports = () => {
     dataSource: 'All',
   });
 
-  // Fetch stats data with the selected time range
+  // Fetch stats data with the selected time range and filters
   const { data: stats = [], isLoading, error } = useQuery({
-    queryKey: ['dailyStats', timeRange],
-    queryFn: () => fetchDailyStats(timeRange),
+    queryKey: ['dailyStats', timeRange, filters],
+    queryFn: () => fetchDailyStats(
+      timeRange,
+      filters.tool !== 'All' ? filters.tool : undefined,
+      filters.scenario !== 'All' ? filters.scenario : undefined,
+      filters.status !== 'All' ? filters.status : undefined,
+      filters.dataSource !== 'All' ? filters.dataSource : undefined
+    ),
   });
 
   // Add console log to debug data issues
-  console.log('Reports data:', { stats, isLoading, error, timeRange });
+  console.log('Reports data:', { stats, isLoading, error, timeRange, filters });
 
   // Handle filter changes
   const handleFilterChange = (filterType: keyof RecordFilters, value: string) => {
@@ -95,7 +101,7 @@ const Reports = () => {
             </div>
           ) : stats.length === 0 ? (
             <div className="bg-white p-8 rounded-lg shadow-sm text-center">
-              <p>No data available for the selected time range.</p>
+              <p>No data available for the selected time range and filters.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
