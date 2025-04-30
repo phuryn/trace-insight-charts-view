@@ -7,9 +7,10 @@ import MainContent from '@/components/MainContent';
 import { fetchDailyStats } from '@/services/supabaseQueries';
 
 const Index = () => {
+  // Always fetch 30 days of data, but Sidebar component will limit to 7 days
   const { data: stats = [] } = useQuery({
     queryKey: ['dailyStats'],
-    queryFn: () => fetchDailyStats(30), // Fetch up to 30 days of stats for better visualization
+    queryFn: () => fetchDailyStats(30),
   });
 
   return (
