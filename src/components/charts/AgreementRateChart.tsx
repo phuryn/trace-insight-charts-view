@@ -35,7 +35,7 @@ const AgreementRateChart = ({ data }: AgreementRateChartProps) => {
 
   return (
     <Card className="w-full">
-      <CardHeader className="pb-0">
+      <CardHeader className="pb-0 mb-4">
         <CardTitle className="text-sm text-gray-600 font-medium">LLM ↔ Human Agreement</CardTitle>
       </CardHeader>
       <CardContent>

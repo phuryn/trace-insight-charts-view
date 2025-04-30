@@ -36,7 +36,7 @@ const AcceptanceRateChart = ({ data }: AcceptanceRateChartProps) => {
 
   return (
     <Card className="w-full">
-      <CardHeader className="pb-0">
+      <CardHeader className="pb-0 mb-4">
         <CardTitle className="text-sm text-gray-600 font-medium">
           Human Acceptance Rate
         </CardTitle>
