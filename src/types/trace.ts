@@ -20,6 +20,7 @@ export interface TraceRecord {
   editableOutput?: string;
   date: string; // ISO date string
   rejectReason?: string;
+  currentIndex?: number; // Added to track position in list
   metadata?: {
     toolName?: string;
     scenario?: string;

@@ -26,6 +26,7 @@ interface RecordFilters {
 
 const MainContent = () => {
   const [selectedRecordId, setSelectedRecordId] = useState<string | null>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const queryClient = useQueryClient();
   
   // Initialize filters with "All" as default values
@@ -84,6 +85,24 @@ const MainContent = () => {
     )
   });
 
+  // Effect to reset current index when records change due to filter changes
+  useEffect(() => {
+    setCurrentIndex(0);
+    // If records are loaded, set the selected record to the first one
+    if (records.length > 0) {
+      setSelectedRecordId(records[0].id);
+    } else {
+      setSelectedRecordId(null);
+    }
+  }, [records]);
+
+  // Effect to update selectedRecordId when navigating with next/previous
+  useEffect(() => {
+    if (records.length > 0 && currentIndex >= 0 && currentIndex < records.length) {
+      setSelectedRecordId(records[currentIndex].id);
+    }
+  }, [currentIndex, records]);
+
   // Fetch details for selected record
   const { data: selectedRecordDetails, isLoading: isLoadingDetails } = useQuery({
     queryKey: ['traceRecord', selectedRecordId],
@@ -114,13 +133,6 @@ const MainContent = () => {
     }
   });
 
-  useEffect(() => {
-    // Set the first record as selected when records load
-    if (records.length > 0 && !selectedRecordId) {
-      setSelectedRecordId(records[0].id);
-    }
-  }, [records, selectedRecordId]);
-
   const handleUpdateStatus = (id: string, status: EvalStatus, rejectReason?: string) => {
     updateStatusMutation.mutate({ id, status, rejectReason });
   };
@@ -133,7 +145,7 @@ const MainContent = () => {
     if (selectedRecordDetails) {
       updateOutputMutation.mutate({ 
         id, 
-        output: selectedRecordDetails.assistantResponse 
+        output: selectedRecordDetails.assistantResponse || '' 
       });
     }
   };
@@ -146,11 +158,31 @@ const MainContent = () => {
     }));
   };
 
+  // Navigation handlers
+  const handlePrevious = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentIndex < records.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    }
+  };
+
   // Combine records with details for the selected record
-  const recordsWithDetails = records.map(record => 
+  const displayRecords = records.map((record, index) => 
     record.id === selectedRecordId && selectedRecordDetails
-      ? { ...selectedRecordDetails }
-      : record
+      ? { 
+          ...record,
+          ...selectedRecordDetails,
+          currentIndex: index 
+        }
+      : { 
+          ...record,
+          currentIndex: index 
+        }
   );
 
   return (
@@ -245,10 +277,12 @@ const MainContent = () => {
         </div>
       ) : records.length > 0 ? (
         <RecordViewer 
-          records={recordsWithDetails}
+          records={displayRecords}
+          currentIndex={currentIndex}
           onUpdateStatus={handleUpdateStatus}
           onUpdateOutput={handleUpdateOutput}
           onResetOutput={handleResetOutput}
+          onNavigate={(newIndex) => setCurrentIndex(newIndex)}
         />
       ) : (
         <div className="text-gray-500 text-center py-8">

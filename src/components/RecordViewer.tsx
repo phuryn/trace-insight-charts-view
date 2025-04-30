@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import { TraceRecord, EvalStatus } from '@/types/trace';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -19,37 +20,35 @@ import remarkGfm from 'remark-gfm';
 
 interface RecordViewerProps {
   records: TraceRecord[];
+  currentIndex: number;
   onUpdateStatus: (id: string, status: EvalStatus, rejectReason?: string) => void;
   onUpdateOutput: (id: string, output: string) => void;
   onResetOutput: (id: string) => void;
+  onNavigate: (index: number) => void;
 }
 
 const RecordViewer = ({
   records,
+  currentIndex,
   onUpdateStatus,
   onUpdateOutput,
   onResetOutput,
+  onNavigate,
 }: RecordViewerProps) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const { toast } = useToast();
 
-  const currentRecord = records[currentIndex];
+  const currentRecord = records[currentIndex] || null;
   
-  // Reset current index when records change
-  useEffect(() => {
-    if (records.length > 0 && currentIndex >= records.length) {
-      setCurrentIndex(0);
-    }
-  }, [records, currentIndex]);
+  if (!currentRecord) return <div>No records to display</div>;
   
   const handlePrevious = () => {
-    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : prev));
+    onNavigate(currentIndex - 1);
   };
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev < records.length - 1 ? prev + 1 : prev));
+    onNavigate(currentIndex + 1);
   };
 
   const handleOutputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -86,8 +85,6 @@ const RecordViewer = ({
       description: "The record has been reset to pending status.",
     });
   };
-
-  if (!currentRecord) return <div>No records to display</div>;
   
   // Check if we have full details for the current record
   const hasFullDetails = !!currentRecord.assistantResponse;
@@ -253,6 +250,12 @@ const RecordViewer = ({
                     <div>{currentRecord.metadata.scenario}</div>
                   </div>
                 )}
+                {currentRecord.metadata?.dataSource && (
+                  <div className="grid grid-cols-2">
+                    <div className="font-medium">Data Source:</div>
+                    <div>{currentRecord.metadata.dataSource}</div>
+                  </div>
+                )}
               </div>
             </TabsContent>
           </Tabs>
@@ -263,7 +266,7 @@ const RecordViewer = ({
             </label>
             {hasFullDetails ? (
               <Textarea 
-                value={currentRecord.editableOutput} 
+                value={currentRecord.editableOutput || ''} 
                 onChange={handleOutputChange}
                 className="min-h-[150px]"
               />
