@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { formatDate } from '@/lib/utils';
 import { DailyStats } from '@/types/trace';
 
@@ -32,29 +32,30 @@ interface AcceptanceRateChartProps {
 
 const AcceptanceRateChart = ({ data }: AcceptanceRateChartProps) => {
   return (
-    <Card>
+    <Card className="w-full">
       <CardHeader className="pb-0">
         <CardTitle className="text-sm text-gray-600 font-medium">
           Human Acceptance Rate
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[120px]">
+        <div className="h-[120px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data}>
+            <LineChart data={data} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
               <XAxis 
                 dataKey="date"
                 tickFormatter={formatDate}
                 tick={{ fontSize: 10 }}
-                axisLine={false}
-                tickLine={false}
+                axisLine={{ stroke: '#e0e0e0' }}
+                tickLine={{ stroke: '#e0e0e0' }}
               />
               <YAxis 
                 domain={[0, 100]} 
                 tickCount={3}
                 tick={{ fontSize: 10 }}
-                axisLine={false}
-                tickLine={false}
+                axisLine={{ stroke: '#e0e0e0' }}
+                tickLine={{ stroke: '#e0e0e0' }}
                 tickFormatter={(value) => `${value}%`}
               />
               <Tooltip content={<CustomTooltip />} />
@@ -63,8 +64,8 @@ const AcceptanceRateChart = ({ data }: AcceptanceRateChartProps) => {
                 dataKey="acceptanceRate"
                 stroke="#22c55e"
                 strokeWidth={2}
-                dot={false}
-                activeDot={{ r: 4 }}
+                dot={{ r: 4, fill: '#22c55e', stroke: '#ffffff', strokeWidth: 2 }}
+                activeDot={{ r: 6, fill: '#22c55e', stroke: '#ffffff', strokeWidth: 2 }}
               />
             </LineChart>
           </ResponsiveContainer>

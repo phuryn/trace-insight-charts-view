@@ -15,7 +15,7 @@ const Sidebar = ({ stats }: SidebarProps) => {
   return (
     <aside className="w-full md:w-64 bg-gray-50 p-4 border-r">
       <h2 className="text-lg font-medium mb-4">Statistics</h2>
-      <div className="space-y-4">
+      <div className="space-y-4 w-full">
         <AgreementRateChart data={recentStats} />
         <AcceptanceRateChart data={recentStats} />
       </div>
