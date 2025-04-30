@@ -17,6 +17,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface RecordViewerProps {
   records: TraceRecord[];
@@ -88,6 +89,7 @@ const RecordViewer = ({
   
   // Check if we have full details for the current record
   const hasFullDetails = !!currentRecord.assistantResponse;
+  const hasUserMessage = !!currentRecord.userMessage;
   
   // Determine which buttons should be disabled based on status
   const isPending = currentRecord.status === 'Pending';
@@ -124,34 +126,34 @@ const RecordViewer = ({
             </TabsList>
             
             <TabsContent value="chat" className="space-y-4 mt-4">
-              <div className="bg-gray-100 rounded-lg p-4">
-                <div className="font-semibold mb-2">User</div>
-                <div className="whitespace-pre-wrap">{currentRecord.userMessage}</div>
-              </div>
+              {hasUserMessage ? (
+                <div className="bg-gray-100 rounded-lg p-4">
+                  <div className="font-semibold mb-2">User</div>
+                  <div className="whitespace-pre-wrap">{currentRecord.userMessage}</div>
+                </div>
+              ) : (
+                <div className="bg-gray-100 rounded-lg p-4 min-h-[100px]">
+                  <div className="font-semibold mb-2">User</div>
+                  <div className="flex items-center justify-center h-16">
+                    <Skeleton className="w-full h-16" />
+                  </div>
+                </div>
+              )}
               
               {hasFullDetails ? (
                 <div className="bg-blue-50 rounded-lg p-4">
                   <div className="font-semibold mb-2">Assistant</div>
                   <div className="prose prose-sm max-w-none">
-                    {/* Render the assistant response with enhanced markdown support */}
-                    {currentRecord.assistantResponse ? (
-                      <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                        components={{
-                          // Override to ensure paragraphs preserve newlines
-                          p: ({node, ...props}) => <p className="whitespace-pre-wrap mb-4" {...props} />,
-                          // Ensure lists render properly with proper spacing
-                          li: ({node, ...props}) => <li className="my-1" {...props} />,
-                          // Make sure preformatted text maintains its formatting
-                          pre: ({node, ...props}) => <pre className="whitespace-pre-wrap bg-gray-100 p-2 rounded" {...props} />
-                        }}
-                      >
-                        {/* Replace literal \n sequences with actual newlines */}
-                        {currentRecord.assistantResponse.replace(/\\n/g, '\n')}
-                      </ReactMarkdown>
-                    ) : (
-                      "No response available"
-                    )}
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        p: ({node, ...props}) => <p className="whitespace-pre-wrap mb-4" {...props} />,
+                        li: ({node, ...props}) => <li className="my-1" {...props} />,
+                        pre: ({node, ...props}) => <pre className="whitespace-pre-wrap bg-gray-100 p-2 rounded" {...props} />
+                      }}
+                    >
+                      {currentRecord.assistantResponse.replace(/\\n/g, '\n')}
+                    </ReactMarkdown>
                   </div>
                 </div>
               ) : (

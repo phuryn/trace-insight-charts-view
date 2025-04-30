@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { TraceRecord, EvalStatus, DailyStats, FunctionCall } from "@/types/trace";
 import { Database } from "@/integrations/supabase/types";
@@ -15,10 +14,10 @@ export const fetchTraceRecords = async (
   status?: StatusType,
   dataSource?: DataSourceType
 ): Promise<TraceRecord[]> => {
-  // Start the query
+  // Start the query - only fetch essential fields
   let query = supabase
     .from('llm_traces')
-    .select('id, user_message, status, llm_score, created_at, tool, scenario, data_source')
+    .select('id, status, llm_score, created_at, tool, scenario, data_source')
     .order('created_at', { ascending: true });
   
   // Apply filters if provided
@@ -46,14 +45,12 @@ export const fetchTraceRecords = async (
     throw error;
   }
 
-  // Map the database records to our application's TraceRecord type
+  // Map the database records to our application's TraceRecord type with minimal data
   return (data || []).map(record => ({
     id: record.id,
     status: record.status,
     llmScore: record.llm_score,
-    userMessage: record.user_message,
-    assistantResponse: "", // Will be loaded on demand when viewing details
-    editableOutput: "", // Will be loaded on demand when viewing details
+    userMessage: "", // Don't load user message in the list view
     date: record.created_at,
     metadata: {
       toolName: record.tool,
@@ -92,8 +89,8 @@ export const fetchTraceRecordDetails = async (id: string): Promise<TraceRecord> 
     id: call.id,
     trace_id: call.trace_id,
     function_name: call.function_name,
-    function_arguments: call.function_arguments, // Now compatible with 'any' type
-    function_response: call.function_response, // Now compatible with 'any' type
+    function_arguments: call.function_arguments,
+    function_response: call.function_response,
     created_at: call.created_at
   })) : [];
 
@@ -103,12 +100,13 @@ export const fetchTraceRecordDetails = async (id: string): Promise<TraceRecord> 
     llmScore: data.llm_score,
     userMessage: data.user_message,
     assistantResponse: data.assistant_response,
-    editableOutput: data.editable_output,
+    editableOutput: data.editable_output || data.assistant_response, // Fallback to assistant response if no editable output
     date: data.created_at,
     rejectReason: data.reject_reason || undefined,
     metadata: {
       toolName: data.tool,
       scenario: data.scenario,
+      dataSource: data.data_source, // Ensure data_source is properly included
       timestamp: data.created_at,
       functionCalls: transformedFunctionCalls
     }

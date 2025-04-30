@@ -74,7 +74,7 @@ const MainContent = () => {
     'Synthetic'
   ];
 
-  // Fetch all records with filters applied
+  // Fetch all records with filters applied - only essential data
   const { data: records = [], isLoading: isLoadingRecords } = useQuery({
     queryKey: ['traceRecords', filters],
     queryFn: () => fetchTraceRecords(
@@ -96,18 +96,12 @@ const MainContent = () => {
     }
   }, [records]);
 
-  // Effect to update selectedRecordId when navigating with next/previous
-  useEffect(() => {
-    if (records.length > 0 && currentIndex >= 0 && currentIndex < records.length) {
-      setSelectedRecordId(records[currentIndex].id);
-    }
-  }, [currentIndex, records]);
-
-  // Fetch details for selected record
+  // Fetch details for selected record only when needed
   const { data: selectedRecordDetails, isLoading: isLoadingDetails } = useQuery({
     queryKey: ['traceRecord', selectedRecordId],
     queryFn: () => selectedRecordId ? fetchTraceRecordDetails(selectedRecordId) : null,
-    enabled: !!selectedRecordId
+    enabled: !!selectedRecordId,
+    staleTime: 30000, // Cache results for 30 seconds
   });
 
   // Update record status mutation
@@ -158,32 +152,39 @@ const MainContent = () => {
     }));
   };
 
-  // Navigation handlers
-  const handlePrevious = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-    }
-  };
-
-  const handleNext = () => {
-    if (currentIndex < records.length - 1) {
-      setCurrentIndex(currentIndex + 1);
+  // Navigation handlers - ensure record data is loaded
+  const handleNavigate = (newIndex: number) => {
+    if (newIndex >= 0 && newIndex < records.length) {
+      setCurrentIndex(newIndex);
+      const newRecordId = records[newIndex].id;
+      setSelectedRecordId(newRecordId);
+      
+      // Prefetch the next record if available
+      if (newIndex + 1 < records.length) {
+        const nextRecordId = records[newIndex + 1].id;
+        queryClient.prefetchQuery({
+          queryKey: ['traceRecord', nextRecordId],
+          queryFn: () => fetchTraceRecordDetails(nextRecordId)
+        });
+      }
     }
   };
 
   // Combine records with details for the selected record
-  const displayRecords = records.map((record, index) => 
-    record.id === selectedRecordId && selectedRecordDetails
-      ? { 
-          ...record,
-          ...selectedRecordDetails,
-          currentIndex: index 
-        }
-      : { 
-          ...record,
-          currentIndex: index 
-        }
-  );
+  const displayRecords = records.map((record, index) => {
+    // Only merge details for the currently selected record
+    if (record.id === selectedRecordId && selectedRecordDetails) {
+      return { 
+        ...record,
+        ...selectedRecordDetails,
+        currentIndex: index 
+      };
+    }
+    return { 
+      ...record,
+      currentIndex: index 
+    };
+  });
 
   return (
     <div className="flex-1 p-6 bg-white">
@@ -282,7 +283,7 @@ const MainContent = () => {
           onUpdateStatus={handleUpdateStatus}
           onUpdateOutput={handleUpdateOutput}
           onResetOutput={handleResetOutput}
-          onNavigate={(newIndex) => setCurrentIndex(newIndex)}
+          onNavigate={handleNavigate}
         />
       ) : (
         <div className="text-gray-500 text-center py-8">
