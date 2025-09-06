@@ -50,7 +50,7 @@ export const fetchTraceRecords = async (
   return (data || []).map(record => ({
     id: record.id,
     status: record.status,
-    llmScore: record.llm_score,
+    llmScore: record.llm_score as 'Pass' | 'Fail',
     userMessage: "", // Don't load user message in the list view
     date: record.created_at,
     metadata: {
@@ -98,7 +98,7 @@ export const fetchTraceRecordDetails = async (id: string): Promise<TraceRecord> 
   return {
     id: data.id,
     status: data.status,
-    llmScore: data.llm_score,
+    llmScore: data.llm_score as 'Pass' | 'Fail',
     userMessage: data.user_message,
     assistantResponse: data.assistant_response,
     editableOutput: data.editable_output || data.assistant_response, // Fallback to assistant response if no editable output

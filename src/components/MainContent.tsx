@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import RecordViewer from './RecordViewer';
+import SyntheticDataGenerator from './SyntheticDataGenerator';
 import { TraceRecord, EvalStatus } from '@/types/trace';
 import { fetchTraceRecords, fetchTraceRecordDetails, updateTraceStatus, updateTraceOutput } from '@/services/supabaseQueries';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -40,23 +41,20 @@ const MainContent = () => {
   // Tool options from Supabase enum
   const toolOptions: ToolType[] = [
     'All',
-    'Listing-Finder',
-    'Email-Draft',
-    'Market-Analysis',
-    'Offer-Generator',
-    'Valuation-Tool',
-    'Appointment-Scheduler'
+    'ChatGPT',
+    'Claude',
+    'Gemini',
+    'Other'
   ];
 
   // Scenario options from Supabase enum
   const scenarioOptions: ScenarioType[] = [
     'All',
-    'Multiple-Listings',
-    'Offer-Submission',
-    'Property-Analysis',
-    'Client-Communication',
-    'Market-Research',
-    'Closing-Process'
+    'Code Generation',
+    'Text Generation',
+    'Data Analysis',
+    'Creative Writing',
+    'Other'
   ];
 
   // Status options from Supabase enum
@@ -70,8 +68,10 @@ const MainContent = () => {
   // Data source options from Supabase enum
   const dataSourceOptions: DataSourceType[] = [
     'All',
-    'Human',
-    'Synthetic'
+    'API',
+    'Upload',
+    'Manual',
+    'Other'
   ];
 
   // Fetch all records with filters applied - only essential data
@@ -191,13 +191,15 @@ const MainContent = () => {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold">Evaluation Records</h2>
         
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              <Filter className="mr-2 h-4 w-4" />
-              Filters
-            </Button>
-          </PopoverTrigger>
+        <div className="flex items-center gap-3">
+          <SyntheticDataGenerator />
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="ml-auto">
+                <Filter className="mr-2 h-4 w-4" />
+                Filters
+              </Button>
+            </PopoverTrigger>
           <PopoverContent className="w-80">
             <div className="space-y-4 p-2">
               <div className="space-y-2">
@@ -268,8 +270,9 @@ const MainContent = () => {
                 </Select>
               </div>
             </div>
-          </PopoverContent>
-        </Popover>
+           </PopoverContent>
+         </Popover>
+        </div>
       </div>
       
       {isLoadingRecords ? (

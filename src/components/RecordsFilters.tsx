@@ -27,23 +27,20 @@ const RecordsFilters = ({ filters, onFilterChange, excludeStatus = false }: Reco
   // Tool options from Supabase enum
   const toolOptions: ToolType[] = [
     'All',
-    'Listing-Finder',
-    'Email-Draft',
-    'Market-Analysis',
-    'Offer-Generator',
-    'Valuation-Tool',
-    'Appointment-Scheduler'
+    'ChatGPT',
+    'Claude',
+    'Gemini',
+    'Other'
   ];
 
   // Scenario options from Supabase enum
   const scenarioOptions: ScenarioType[] = [
     'All',
-    'Multiple-Listings',
-    'Offer-Submission',
-    'Property-Analysis',
-    'Client-Communication',
-    'Market-Research',
-    'Closing-Process'
+    'Code Generation',
+    'Text Generation',
+    'Data Analysis',
+    'Creative Writing',
+    'Other'
   ];
 
   // Status options from Supabase enum
@@ -57,8 +54,10 @@ const RecordsFilters = ({ filters, onFilterChange, excludeStatus = false }: Reco
   // Data source options from Supabase enum
   const dataSourceOptions: DataSourceType[] = [
     'All',
-    'Human',
-    'Synthetic'
+    'API',
+    'Upload',
+    'Manual',
+    'Other'
   ];
 
   return (
