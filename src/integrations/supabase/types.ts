@@ -14,16 +14,144 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      llm_function_calls: {
+        Row: {
+          created_at: string
+          function_arguments: Json | null
+          function_name: string
+          function_response: Json | null
+          id: string
+          trace_id: string
+        }
+        Insert: {
+          created_at?: string
+          function_arguments?: Json | null
+          function_name: string
+          function_response?: Json | null
+          id?: string
+          trace_id: string
+        }
+        Update: {
+          created_at?: string
+          function_arguments?: Json | null
+          function_name?: string
+          function_response?: Json | null
+          id?: string
+          trace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "llm_function_calls_trace_id_fkey"
+            columns: ["trace_id"]
+            isOneToOne: false
+            referencedRelation: "llm_traces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      llm_traces: {
+        Row: {
+          assistant_response: string | null
+          created_at: string
+          data_source: Database["public"]["Enums"]["data_source_type"] | null
+          editable_output: string | null
+          id: string
+          llm_score: string
+          reject_reason: string | null
+          scenario: Database["public"]["Enums"]["scenario_type"] | null
+          status: Database["public"]["Enums"]["eval_status_type"]
+          tool: Database["public"]["Enums"]["tool_type"] | null
+          updated_at: string
+          user_message: string
+        }
+        Insert: {
+          assistant_response?: string | null
+          created_at?: string
+          data_source?: Database["public"]["Enums"]["data_source_type"] | null
+          editable_output?: string | null
+          id?: string
+          llm_score: string
+          reject_reason?: string | null
+          scenario?: Database["public"]["Enums"]["scenario_type"] | null
+          status?: Database["public"]["Enums"]["eval_status_type"]
+          tool?: Database["public"]["Enums"]["tool_type"] | null
+          updated_at?: string
+          user_message: string
+        }
+        Update: {
+          assistant_response?: string | null
+          created_at?: string
+          data_source?: Database["public"]["Enums"]["data_source_type"] | null
+          editable_output?: string | null
+          id?: string
+          llm_score?: string
+          reject_reason?: string | null
+          scenario?: Database["public"]["Enums"]["scenario_type"] | null
+          status?: Database["public"]["Enums"]["eval_status_type"]
+          tool?: Database["public"]["Enums"]["tool_type"] | null
+          updated_at?: string
+          user_message?: string
+        }
+        Relationships: []
+      }
+      users: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          role: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id: string
+          role?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          role?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_current_user_role: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      get_daily_stats_filtered: {
+        Args: {
+          days_limit?: number
+          filter_data_source?: Database["public"]["Enums"]["data_source_type"]
+          filter_scenario?: Database["public"]["Enums"]["scenario_type"]
+          filter_status?: Database["public"]["Enums"]["eval_status_type"]
+          filter_tool?: Database["public"]["Enums"]["tool_type"]
+        }
+        Returns: {
+          acceptance_rate: number
+          agreement_rate: number
+          date: string
+        }[]
+      }
     }
     Enums: {
-      [_ in never]: never
+      data_source_type: "API" | "Upload" | "Manual" | "Other"
+      eval_status_type: "Pending" | "Accepted" | "Rejected"
+      scenario_type:
+        | "Code Generation"
+        | "Text Generation"
+        | "Data Analysis"
+        | "Creative Writing"
+        | "Other"
+      tool_type: "ChatGPT" | "Claude" | "Gemini" | "Other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +278,17 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      data_source_type: ["API", "Upload", "Manual", "Other"],
+      eval_status_type: ["Pending", "Accepted", "Rejected"],
+      scenario_type: [
+        "Code Generation",
+        "Text Generation",
+        "Data Analysis",
+        "Creative Writing",
+        "Other",
+      ],
+      tool_type: ["ChatGPT", "Claude", "Gemini", "Other"],
+    },
   },
 } as const
